@@ -1,0 +1,52 @@
+name: Persona Knowledge Updater
+
+on:
+  schedule:
+    - cron: '0 8 * * 0'
+  workflow_dispatch:
+    inputs:
+      personas:
+        description: 'Personas to update (comma-separated folder names, or "all")'
+        required: false
+        default: 'all'
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  update-personas:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install anthropic requests
+
+      - name: Run persona updater
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          PERSONAS_TO_UPDATE: ${{ github.event.inputs.personas || 'all' }}
+        run: python scripts/persona_updater.py
+
+      - name: Commit updated files
+        run: |
+          git config --local user.email "persona-bot@github-actions"
+          git config --local user.name "Persona Updater Bot"
+          git add personas/*/persona-updates.md
+          git add logs/
+          if git diff --staged --quiet; then
+            echo "No changes to commit."
+          else
+            CHANGED=$(git diff --staged --name-only | tr '\n' ' ')
+            git commit -m "chore(personas): weekly update [$(date +'%Y-%m-%d')] — ${CHANGED}"
+            git push
+          fi

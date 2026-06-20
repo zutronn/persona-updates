@@ -1,0 +1,296 @@
+[
+  {
+    "run_date": "2026-04-20",
+    "run_time": "2026-04-20 00:00 UTC",
+    "personas": {
+      "ElonMusk": {
+        "has_updates": true,
+        "update_count": 3,
+        "topics_found": [
+          "AI",
+          "crypto",
+          "government efficiency"
+        ],
+        "sources_read": [
+          "manual seed"
+        ]
+      }
+    }
+  },
+  {
+    "run_date": "2026-04-26",
+    "run_time": "2026-04-26 08:26 UTC",
+    "personas": {
+      "ElonMusk": {
+        "has_updates": false,
+        "update_count": 0,
+        "topics_found": [],
+        "sources_read": []
+      }
+    }
+  },
+  {
+    "run_date": "2026-05-02",
+    "run_time": "2026-05-02 07:46 UTC",
+    "personas": {
+      "ElonMusk": {
+        "has_updates": false,
+        "update_count": 0,
+        "topics_found": [],
+        "sources_read": []
+      }
+    }
+  },
+  {
+    "run_date": "2026-05-02",
+    "run_time": "2026-05-02 07:46 UTC",
+    "personas": {
+      "ElonMusk": {
+        "has_updates": false,
+        "update_count": 0,
+        "topics_found": [],
+        "sources_read": []
+      }
+    }
+  },
+  {
+    "run_date": "2026-05-02",
+    "run_time": "2026-05-02 07:47 UTC",
+    "personas": {
+      "ElonMusk": {
+        "has_updates": false,
+        "update_count": 0,
+        "topics_found": [],
+        "sources_read": []
+      }
+    }
+  },
+  {
+    "run_date": "2026-05-02",
+    "run_time": "2026-05-02 07:48 UTC",
+    "personas": {
+      "ElonMusk": {
+        "has_updates": true,
+        "update_count": 6,
+        "topics_found": [
+          "AI",
+          "crypto",
+          "investments"
+        ],
+        "sources_read": [
+          "TechCrunch",
+          "Fortune",
+          "Geeky Gadgets",
+          "Benzinga",
+          "Wikipedia"
+        ]
+      }
+    }
+  },
+  {
+    "run_date": "2026-05-02",
+    "run_time": "2026-05-02 07:50 UTC",
+    "personas": {
+      "ElonMusk": {
+        "has_updates": true,
+        "update_count": 5,
+        "topics_found": [
+          "AI",
+          "crypto",
+          "investment",
+          "tech infrastructure"
+        ],
+        "sources_read": [
+          "TechCrunch",
+          "Fortune",
+          "Action News 5",
+          "CNBC",
+          "TheStreet"
+        ]
+      }
+    }
+  },
+  {
+    "run_date": "2026-05-03",
+    "run_time": "2026-05-03 08:33 UTC",
+    "personas": {
+      "ElonMusk": {
+        "has_updates": true,
+        "update_count": 5,
+        "topics_found": [
+          "AI",
+          "crypto",
+          "investment",
+          "tech"
+        ],
+        "sources_read": [
+          "TechCrunch",
+          "Wikipedia",
+          "Fortune",
+          "The Motley Fool",
+          "GuruFocus"
+        ]
+      }
+    }
+  },
+  {
+    "run_date": "2026-05-10",
+    "run_time": "2026-05-10 08:36 UTC",
+    "personas": {
+      "ElonMusk": {
+        "has_updates": true,
+        "update_count": 6,
+        "topics_found": [
+          "AI",
+          "crypto",
+          "investment"
+        ],
+        "sources_read": [
+          "TechCrunch",
+          "CNBC",
+          "Fortune",
+          "The Motley Fool",
+          "Electrek",
+          "ColombiaOne"
+        ]
+      }
+    }
+  },
+  {
+    "run_date": "2026-05-17",
+    "run_time": "2026-05-17 08:42 UTC",
+    "personas": {
+      "ElonMusk": {
+        "has_updates": true,
+        "update_count": 8,
+        "topics_found": [
+          "AI",
+          "xAI restructuring",
+          "Bitcoin holdings",
+          "semiconductor investment",
+          "data center expansion"
+        ],
+        "sources_read": [
+          "Wikipedia",
+          "CNBC",
+          "TechCrunch",
+          "BeInCrypto",
+          "CoinDesk",
+          "TheStreet",
+          "Data Center Dynamics",
+          "Bloomberg",
+          "Not a Tesla App"
+        ]
+      }
+    }
+  },
+  {
+    "run_date": "2026-05-24",
+    "run_time": "2026-05-24 08:50 UTC",
+    "personas": {
+      "ElonMusk": {
+        "has_updates": true,
+        "update_count": 6,
+        "topics_found": [
+          "AI",
+          "crypto",
+          "investment"
+        ],
+        "sources_read": [
+          "TechCrunch",
+          "Bloomberg",
+          "CoinDesk",
+          "Fortune",
+          "NPR",
+          "Not a Tesla App",
+          "eWeek",
+          "Basenor",
+          "Crypto Times"
+        ]
+      }
+    }
+  },
+  {
+    "run_date": "2026-05-31",
+    "run_time": "2026-05-31 09:01 UTC",
+    "personas": {
+      "ElonMusk": {
+        "has_updates": true,
+        "update_count": 6,
+        "topics_found": [
+          "AI",
+          "xAI",
+          "crypto",
+          "Bitcoin",
+          "SpaceX IPO",
+          "Tesla merger",
+          "government contracts"
+        ],
+        "sources_read": [
+          "Wikipedia",
+          "Bloomberg",
+          "Fox News",
+          "eWeek",
+          "Fortune",
+          "CryptoTimes",
+          "Al Jazeera",
+          "NPR",
+          "CoinDesk",
+          "Not a Tesla App",
+          "StartupHub.ai"
+        ]
+      }
+    }
+  },
+  {
+    "run_date": "2026-06-07",
+    "run_time": "2026-06-07 09:01 UTC",
+    "personas": {
+      "ElonMusk": {
+        "has_updates": true,
+        "update_count": 6,
+        "topics_found": [
+          "AI",
+          "crypto",
+          "investment"
+        ],
+        "sources_read": [
+          "Wikipedia",
+          "CNBC",
+          "TechCrunch",
+          "Fortune",
+          "Morgan Stanley",
+          "BeInCrypto",
+          "Capital.com",
+          "Reuters",
+          "Bloomberg"
+        ]
+      }
+    }
+  },
+  {
+    "run_date": "2026-06-14",
+    "run_time": "2026-06-14 09:04 UTC",
+    "personas": {
+      "ElonMusk": {
+        "has_updates": true,
+        "update_count": 5,
+        "topics_found": [
+          "AI",
+          "investment",
+          "tech"
+        ],
+        "sources_read": [
+          "Deseret News",
+          "NPR",
+          "The Washington Post",
+          "The Motley Fool",
+          "Finviz",
+          "TechCrunch",
+          "Business Insider",
+          "Fortune"
+        ]
+      }
+    }
+  }
+]

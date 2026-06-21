@@ -742,3 +742,75 @@ Morgan Stanley cited Musk's belief that applying 10x the compute to LLM training
 - **Implication:** This confirms Musk maintains strong conviction in compute-driven AI scaling as the primary path to AGI advancement.
 
 ---
+
+## 2026-06-21 — ✅ New updates found
+
+| Field | Value |
+|---|---|
+| Run time | 2026-06-21 10:16 UTC |
+| Known facts checked against | 19 |
+| Topics searched | 3 |
+| New updates extracted | 6 |
+| Topics covered | AI, xAI, acquisitions, legal, stock performance, infrastructure |
+| Sources cited | Yahoo Finance, CNBC, TechCrunch, Gizmodo, Business Insider, Engadget, Democracy Now, Earthjustice, StockTwits |
+
+### Topics Searched
+- Elon Musk AI and xAI latest news
+- Elon Musk Bitcoin crypto statement
+- Elon Musk investment tech announcement
+
+### What Was New This Run
+Let me search for more specific recent news from the past week:
+Based on my searches, I found several genuinely NEW updates not already in your known facts list:
+
+### SpaceX Cursor Acquisition — June 16, 2026
+- **View/Action:** 
+SpaceX confirmed it will acquire Anysphere (maker of Cursor AI coding tool) for $60 billion in an all-stock transaction, with closing expected Q3 2026 pending regulatory approvals
+. 
+This follows the April option that gave SpaceX the right to either pay $10 billion for partnership or acquire for $60 billion
+.
+- **Source:** Yahoo Finance, CNBC, TechCrunch
+- **Implication:** This transforms the April option into an executed acquisition, signaling Musk's commitment to vertical AI integration through developer tooling rather than just models.
+
+### Yann LeCun xAI Critique — June 18, 2026
+- **View/Action:** 
+AI pioneer Yann LeCun called xAI "kind of a failure" in CNBC interview, stating Musk faces difficulty hiring top AI talent due to how he "not behaved in sort of very good ways toward the previous team"
+. 
+LeCun characterized xAI as "just a rent-a-data-center operation" that rents infrastructure to others "because that's the only way he can recoup the costs"
+.
+- **Source:** CNBC, Gizmodo, Business Insider
+- **Implication:** High-profile external criticism from AI godfather reinforces narrative of xAI organizational dysfunction and positions it as infrastructure play rather than frontier AI competitor.
+
+### DOJ Intervention NAACP Lawsuit — June 15-16, 2026
+- **View/Action:** 
+DOJ asked Mississippi federal court to dismiss NAACP lawsuit against xAI, accusing NAACP of threatening "American national, economic, and energy security" by seeking to shut off power supply for AI supporting Department of War military operations
+. 
+DOJ filing stated it uses only four AI models for mission-critical operations on classified networks, with Grok being one of them
+.
+- **Source:** CNBC, Engadget, Democracy Now
+- **Implication:** Reveals unprecedented government protection of Musk's AI operations via national security justification, expanding Grok's disclosed military integration beyond previously known Pentagon deployment.
+
+### SpaceX Stock Performance Post-IPO — June 12-18, 2026
+- **View/Action:** 
+SPCX trading at $213.50 with market cap near $2.81 trillion
+, and 
+shares gained roughly 16% on Tuesday following Cursor acquisition announcement, topping Amazon and Microsoft by market cap to become fourth most valuable U.S. company
+.
+- **Source:** Yahoo Finance, CNBC
+- **Implication:** Stock has surged ~58% from $135 IPO price in less than a week, validating market appetite for Musk's AI-space convergence thesis despite known losses.
+
+### SpaceX-Google Compute Deal — June 2026
+- **View/Action:** 
+SpaceX signed deal to provide Google with compute capacity worth $920 million per month for 32 months
+, in addition to the previously disclosed Anthropic deal.
+- **Source:** StockTwits, CNBC
+- **Implication:** Adds major second "neocloud" customer alongside Anthropic, demonstrating xAI infrastructure monetization strategy LeCun criticized as sign of weakness.
+
+### xAI Turbine Count Update — June 2026
+- **View/Action:** 
+xAI installed and is operating 59 unpermitted turbines at Southaven site
+, up from the 27 originally alleged in April NAACP lawsuit.
+- **Source:** Earthjustice
+- **Implication:** More than doubled turbine deployment since lawsuit filed, suggesting aggressive expansion despite legal challenges and environmental concerns.
+
+---

@@ -3,20 +3,22 @@
 persona_updater.py
 ------------------
 Weekly GitHub Actions script that:
-1. Uses Claude with web_search tool to find latest persona content
-2. Extracts concrete belief/view/action updates
-3. Appends structured deltas to each persona's persona-updates.md
-4. Writes detailed logs to logs/{PersonaName}/update-log.md
-5. Updates logs/run-history.json
+1. Loads a small "known facts index" (deduplicated, one line per fact, 90-day window)
+2. Passes that index to Claude so it skips already-known facts and only
+   reports genuinely NEW developments — saves tokens by avoiding repeat output
+3. Appends full update blocks to persona-updates.md (the readable file)
+4. Appends short index lines to known-facts-index.md (the dedup memory)
+5. Auto-prunes the index to entries within the last 90 days, keeping it small
+6. Writes detailed logs to logs/{PersonaName}/update-log.md
+7. Updates logs/run-history.json
 
-Uses Claude's native web_search tool instead of Serper
-(Serper blocks GitHub Actions IPs on free tier).
+Uses Claude's native web_search tool — no external search API needed.
 """
 
 import os
 import json
 import re
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from anthropic import Anthropic
 
@@ -26,6 +28,8 @@ ROOT         = Path(__file__).parent.parent
 PERSONAS_DIR = ROOT / "personas"
 LOGS_DIR     = ROOT / "logs"
 RUN_HISTORY  = LOGS_DIR / "run-history.json"
+INDEX_NAME   = "known-facts-index.md"
+INDEX_RETENTION_DAYS = 90
 
 # ── Config ────────────────────────────────────────────────────────────────────
 
@@ -43,14 +47,7 @@ PERSONAS = {
             "Elon Musk investment tech announcement",
         ],
     },
-    # Add more personas here:
-    # "WarrenBuffett": {
-    #     "full_name": "Warren Buffett",
-    #     "search_topics": [
-    #         "Warren Buffett latest investment view",
-    #         "Berkshire Hathaway recent news",
-    #     ],
-    # },
+    # Add more personas here — same pattern.
 }
 
 # ── Utilities ─────────────────────────────────────────────────────────────────
@@ -68,60 +65,100 @@ def get_date_context():
     dt = now_utc()
     return {"year": str(dt.year), "month": dt.strftime("%B")}
 
+# ── Known Facts Index (dedup memory) ──────────────────────────────────────────
+
+def load_index_lines(persona_folder: Path) -> list[str]:
+    idx_file = persona_folder / INDEX_NAME
+    if not idx_file.exists():
+        return []
+    lines = []
+    for line in idx_file.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if line.startswith("- ") and re.match(r"-\s*\d{4}-\d{2}-\d{2}", line):
+            lines.append(line)
+    return lines
+
+def prune_lines(lines: list[str]) -> list[str]:
+    cutoff = now_utc() - timedelta(days=INDEX_RETENTION_DAYS)
+    kept = []
+    for line in lines:
+        m = re.match(r"-\s*(\d{4}-\d{2}-\d{2})", line)
+        if m:
+            try:
+                d = datetime.strptime(m.group(1), "%Y-%m-%d").replace(tzinfo=timezone.utc)
+                if d < cutoff:
+                    continue
+            except Exception:
+                pass
+        kept.append(line)
+    return kept
+
+def save_index(persona_folder: Path, lines: list[str]):
+    idx_file = persona_folder / INDEX_NAME
+    header = (
+        "# Known Facts Index (internal — used for dedup checks, NOT shown to the persona)\n"
+        "> Auto-pruned to last 90 days. One line per distinct fact. Do not edit manually.\n\n"
+    )
+    idx_file.write_text(header + "\n".join(lines) + "\n", encoding="utf-8")
+
 # ── Claude web_search extraction ──────────────────────────────────────────────
 
-def extract_updates(full_name: str, search_topics: list, date_ctx: dict) -> dict:
+def extract_updates(full_name: str, search_topics: list, date_ctx: dict, known_facts: list[str]) -> dict:
     """
-    Ask Claude to search for latest content and extract updates.
-    Uses Claude's native web_search tool — no external search API needed.
+    Ask Claude to search for latest content, SKIP anything already in known_facts,
+    and extract only genuinely new updates. Returns updates + short index lines.
     """
     client = Anthropic(api_key=ANTHROPIC_API_KEY)
 
-    month_year = f"{date_ctx['month']} {date_ctx['year']}"
     topics_str = "\n".join(f"- {t}" for t in search_topics)
+    known_str  = "\n".join(known_facts) if known_facts else "(none yet — first run)"
 
     prompt = f"""You are maintaining a live knowledge update file for: {full_name}.
 
 Today is {date_ctx['month']} {date_ctx['year']}.
 
-Please search for recent news and statements from {full_name} on these topics:
+ALREADY KNOWN FACTS (do not re-report these — only report something NEW, or a
+material update to one of these, like a number changing or a deal closing):
+{known_str}
+
+Search for recent news and statements from {full_name} on:
 {topics_str}
 
-For each search, look for content from the past 4 weeks specifically.
+Focus on the past 1-2 weeks specifically, since older ground is already covered above.
 
-After searching, extract ONLY concrete verifiable updates:
-- New opinions or public statements directly from {full_name}
-- Investment actions or announcements
-- Product/company news they personally drove
-- Clearly stated new views on AI, crypto, markets, or technology
-
-SKIP vague speculation, repetition of old positions, or unverified rumours.
-
-For each genuine update found, output EXACTLY this format:
+For each genuinely NEW update found (not already in the known facts list above),
+output EXACTLY this format:
 
 ### [Topic] — [Date if known]
 - **View/Action:** [1-2 sentence factual summary]
 - **Source:** [Publication or platform name only]
 - **Implication:** [1 sentence: how this updates persona reasoning on this topic]
 
-After all update blocks output this JSON (required):
+After all update blocks, output this JSON (required):
 ```json
 {{
   "has_updates": true,
   "topics_found": ["AI", "crypto"],
   "sources_read": ["Reuters", "Bloomberg"],
-  "update_count": 2
+  "update_count": 2,
+  "index_lines": [
+    "- 2026-06-21 | Short topic: one-line fact summary under 15 words",
+    "- 2026-06-21 | Another short fact"
+  ]
 }}
 ```
+Each index_line must start with "- YYYY-MM-DD | " and be ONE short line per new fact —
+these are for internal dedup tracking only, keep them terse.
 
-If NO meaningful updates found, output:
+If NOTHING new is found (everything matches known facts), output:
 NO_UPDATES
 ```json
 {{
   "has_updates": false,
   "topics_found": [],
   "sources_read": [],
-  "update_count": 0
+  "update_count": 0,
+  "index_lines": []
 }}
 ```
 """
@@ -133,12 +170,10 @@ NO_UPDATES
         messages=[{"role": "user", "content": prompt}],
     )
 
-    # Collect all text blocks from response
     text_parts = [b.text for b in response.content if hasattr(b, "text") and b.text]
     text = "\n".join(text_parts).strip()
 
-    # Parse JSON metadata
-    meta = {"has_updates": False, "topics_found": [], "sources_read": [], "update_count": 0}
+    meta = {"has_updates": False, "topics_found": [], "sources_read": [], "update_count": 0, "index_lines": []}
     match = re.search(r"```json\s*(\{.*?\})\s*```", text, re.DOTALL)
     if match:
         try:
@@ -162,7 +197,7 @@ def append_persona_updates(persona_folder: Path, run_date: str, update_text: str
         f.write(block)
 
 
-def write_update_log(persona_key, run_date, run_time, result, topics_searched, full_name):
+def write_update_log(persona_key, run_date, run_time, result, topics_searched, full_name, known_count):
     log_dir  = LOGS_DIR / persona_key
     log_dir.mkdir(parents=True, exist_ok=True)
     log_file = log_dir / "update-log.md"
@@ -172,11 +207,11 @@ def write_update_log(persona_key, run_date, run_time, result, topics_searched, f
             f.write(f"# Update Log — {full_name}\n")
             f.write("> Auto-maintained by GitHub Actions. One entry per weekly run.\n\n---\n")
 
-    status  = "✅ Updates found" if result["has_updates"] else "⬜ No new updates"
+    status  = "✅ New updates found" if result["has_updates"] else "⬜ Nothing new (all known)"
     topics  = ", ".join(result.get("topics_found", [])) or "none"
     sources = ", ".join(result.get("sources_read", [])) or "none"
     topics_md = "\n".join(f"- {t}" for t in topics_searched)
-    updates_md = result["updates"] if result["has_updates"] else "_No meaningful new content found this run._"
+    updates_md = result["updates"] if result["has_updates"] else "_Everything found already matched the known-facts index — no duplicate written._"
 
     entry = f"""
 ## {run_date} — {status}
@@ -184,15 +219,16 @@ def write_update_log(persona_key, run_date, run_time, result, topics_searched, f
 | Field | Value |
 |---|---|
 | Run time | {run_time} |
+| Known facts checked against | {known_count} |
 | Topics searched | {len(topics_searched)} |
-| Updates extracted | {result.get("update_count", 0)} |
+| New updates extracted | {result.get("update_count", 0)} |
 | Topics covered | {topics} |
 | Sources cited | {sources} |
 
 ### Topics Searched
 {topics_md}
 
-### What Was Updated
+### What Was New This Run
 {updates_md}
 
 ---
@@ -256,18 +292,28 @@ def run():
             continue
 
         print(f"\n[{full_name}]")
-        print(f"  → Searching with Claude web_search...")
 
-        result = extract_updates(full_name, cfg["search_topics"], date_ctx)
+        # Load + prune known facts index (this is the dedup memory)
+        existing_lines = load_index_lines(persona_folder)
+        existing_lines = prune_lines(existing_lines)
+        print(f"  → {len(existing_lines)} known facts loaded (after 90-day prune)")
 
-        status = f"✅ {result.get('update_count', 0)} updates" if result["has_updates"] else "⬜ no new updates"
+        print(f"  → Searching with Claude web_search (skipping known facts)...")
+        result = extract_updates(full_name, cfg["search_topics"], date_ctx, existing_lines)
+
+        status = f"✅ {result.get('update_count', 0)} NEW updates" if result["has_updates"] else "⬜ nothing new"
         print(f"  → {status}")
 
         if result["has_updates"]:
             append_persona_updates(persona_folder, run_date, result["updates"])
             print(f"  → persona-updates.md updated")
 
-        write_update_log(persona_key, run_date, run_time, result, cfg["search_topics"], full_name)
+            new_index_lines = [l.strip() for l in result.get("index_lines", []) if l.strip()]
+            combined = prune_lines(existing_lines + new_index_lines)
+            save_index(persona_folder, combined)
+            print(f"  → known-facts-index.md updated ({len(combined)} facts tracked)")
+
+        write_update_log(persona_key, run_date, run_time, result, cfg["search_topics"], full_name, len(existing_lines))
         print(f"  → log written to logs/{persona_key}/update-log.md")
 
         persona_results[persona_key] = result
@@ -277,9 +323,9 @@ def run():
     print(f"\n{'='*60}")
     print(f"Done — {datetime_str()}")
     total = sum(v.get("update_count", 0) for v in persona_results.values())
-    print(f"Total updates: {total}")
+    print(f"Total NEW updates: {total}")
     for k, v in persona_results.items():
-        s = f"✅ {v.get('update_count',0)} updates" if v["has_updates"] else "⬜ no changes"
+        s = f"✅ {v.get('update_count',0)} new" if v["has_updates"] else "⬜ no changes"
         print(f"  {k}: {s}")
     print(f"{'='*60}\n")
 

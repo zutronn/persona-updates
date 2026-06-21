@@ -42,6 +42,9 @@ jobs:
           git config --local user.email "persona-bot@github-actions"
           git config --local user.name "Persona Updater Bot"
           git add personas/*/persona-updates.md
+          git add personas/*/known-facts-index.md
+          git add personas/*/recent-quotes.md
+          git add personas/*/SKILL.md
           git add logs/
           if git diff --staged --quiet; then
             echo "No changes to commit."

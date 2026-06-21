@@ -367,5 +367,49 @@
         ]
       }
     }
+  },
+  {
+    "run_date": "2026-06-21",
+    "run_time": "2026-06-21 19:30 UTC",
+    "personas": {
+      "ElonMusk": {
+        "has_updates": true,
+        "update_count": 3,
+        "topics_found": [
+          "legal",
+          "xAI financials",
+          "compute infrastructure"
+        ],
+        "sources_read": [
+          "CNBC",
+          "Yahoo Finance",
+          "IBTimes UK",
+          "Democracy Now",
+          "BitMEX",
+          "BuildMVPFast"
+        ]
+      }
+    }
+  },
+  {
+    "run_date": "2026-06-21",
+    "run_time": "2026-06-21 19:31 UTC",
+    "personas": {
+      "ElonMusk": {
+        "has_updates": false,
+        "update_count": 0,
+        "topics_found": [],
+        "sources_read": [
+          "IBTimes UK",
+          "Storyboard18",
+          "Fortune",
+          "Yahoo Finance",
+          "TheStreet",
+          "CryptoNews",
+          "Bloomberg",
+          "Wikipedia"
+        ]
+      }
+    }
   }
 ]

@@ -650,3 +650,35 @@ Residents near Southaven xAI plant filed separate class action this month over n
 .
 - **Source:** IBTimes UK
 - **Implication:** Opens second legal front beyond NAACP environmental suit, escalating local opposition to data center expansion.
+
+## Run: 2026-06-21
+
+Based on my search results, I found one genuinely new update not already covered in the known facts list:
+
+### Class Action Lawsuit — June 2026
+
+- **View/Action:** 
+Residents near the xAI facility in Southaven, Mississippi filed a separate class-action lawsuit earlier this month alleging the company's power plant exposes them to "near-constant noise, vibrations and other nuisance-level harms."
+ This is distinct from the NAACP's Clean Air Act lawsuit.
+- **Source:** CNBC
+- **Implication:** Musk now faces dual legal fronts in Mississippi—environmental law violations and quality-of-life tort claims—expanding legal exposure beyond regulatory compliance to private damages.
+
+### xAI Q1 2026 Financial Disclosure — May 2026
+
+- **View/Action:** 
+xAI had an operating loss of $2.47 billion on $818 million in revenue in Q1 2026, representing 17% of SpaceX's overall revenue of $4.69 billion for the quarter.
+ 
+In 2025 alone, xAI lost $6.36 billion on $3.2 billion in revenue.
+
+- **Source:** Yahoo Finance
+- **Implication:** These first audited xAI financials reveal losses accelerating faster than revenue growth, validating Musk's capital-intensive bet on AI infrastructure but showing immediate profitability remains distant.
+
+### Anthropic Compute Deal Details — May 2026
+
+- **View/Action:** 
+In May, Anthropic entered into an agreement to pay xAI $1.25 billion per month to access compute through its Colossus data center.
+ 
+The prospectus states that either party can terminate the agreement with 90 days' notice.
+
+- **Source:** Yahoo Finance
+- **Implication:** The deal provides critical near-term revenue ($15B annually) but carries termination risk; Musk is essentially renting infrastructure to a direct AI competitor to fund his own AI buildout.

@@ -29,4 +29,6 @@
 - 2026-06-20 | Bitcoin-AI thesis: Musk connects AI abundance to currency debasement, crypto as hedge
 - 2026-06-21 | Net worth: $1.23T (Bloomberg), $1.2T (Forbes), briefly hit $1.4T post-IPO
 - 2026-06-20 | AI deflation thesis: predicted AI will cause deflation not inflation via abundance
-- 2026-06 | Southaven lawsuit: residents filed class action over turbine noise and vibration
+- 2026-06-16 | Southaven residents: class action filed over xAI turbine noise and vibrations
+- 2026-05-20 | xAI Q1 2026: $2.47B loss on $818M revenue, $7.7B capex
+- 2026-05-20 | Anthropic compute deal: 90-day termination clause disclosed in S-1 filing

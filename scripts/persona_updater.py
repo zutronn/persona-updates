@@ -29,7 +29,10 @@ PERSONAS_DIR = ROOT / "personas"
 LOGS_DIR     = ROOT / "logs"
 RUN_HISTORY  = LOGS_DIR / "run-history.json"
 INDEX_NAME   = "known-facts-index.md"
+QUOTES_NAME  = "recent-quotes.md"
+SKILL_NAME   = "SKILL.md"
 INDEX_RETENTION_DAYS = 90
+QUOTES_MAX_COUNT = 12
 
 # ── Config ────────────────────────────────────────────────────────────────────
 
@@ -100,6 +103,90 @@ def save_index(persona_folder: Path, lines: list[str]):
         "> Auto-pruned to last 90 days. One line per distinct fact. Do not edit manually.\n\n"
     )
     idx_file.write_text(header + "\n".join(lines) + "\n", encoding="utf-8")
+
+# ── Recent Quotes (feeds the Live Knowledge block in SKILL.md) ───────────────
+
+def load_quote_lines(persona_folder: Path) -> list[str]:
+    f = persona_folder / QUOTES_NAME
+    if not f.exists():
+        return []
+    lines = []
+    for line in f.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if line.startswith("- ") and re.match(r"-\s*\d{4}-\d{2}-\d{2}", line):
+            lines.append(line)
+    return lines
+
+def cap_lines_by_date(lines: list[str], max_count: int) -> list[str]:
+    def extract_date(line):
+        m = re.match(r"-\s*(\d{4}-\d{2}-\d{2})", line)
+        return m.group(1) if m else "0000-00-00"
+    return sorted(lines, key=extract_date, reverse=True)[:max_count]
+
+def format_quote_storage(date: str, quote: str, source: str, context: str) -> str:
+    quote   = quote.replace("|", "-").strip()
+    source  = source.replace("|", "-").strip()
+    context = context.replace("|", "-").strip()
+    return f"- {date} | {quote} | {source} | {context}"
+
+def parse_quote_storage(line: str):
+    body = line[1:].strip() if line.startswith("-") else line
+    parts = [p.strip() for p in body.split("|")]
+    while len(parts) < 4:
+        parts.append("")
+    return parts[0], parts[1], parts[2], parts[3]  # date, quote, source, context
+
+def save_quote_lines(persona_folder: Path, lines: list[str]):
+    f = persona_folder / QUOTES_NAME
+    header = (
+        "# Recent Quotes (internal — feeds the Live Knowledge block in SKILL.md)\n"
+        f"> Auto-pruned to last {QUOTES_MAX_COUNT} quotes. Do not edit manually.\n\n"
+    )
+    f.write_text(header + "\n".join(lines) + "\n", encoding="utf-8")
+
+# ── SKILL.md Live Knowledge block injector ────────────────────────────────────
+
+def render_live_block(index_lines: list[str], quote_lines: list[str], run_date: str) -> str:
+    if quote_lines:
+        quotes_md = "\n".join(
+            f'> "{q}" — {s}, {d}' + (f" _({c})_" if c else "")
+            for d, q, s, c in (parse_quote_storage(l) for l in quote_lines)
+        )
+    else:
+        quotes_md = "_Nothing quote-worthy tracked recently._"
+
+    facts_md = "\n".join(index_lines) if index_lines else "_No facts tracked yet._"
+
+    return (
+        "<!-- AUTO_LIVE_BLOCK_START -->\n"
+        f"## 🔴 Live Knowledge (auto-updated weekly — last refresh: {run_date})\n\n"
+        "### What He Actually Said Recently\n"
+        f"{quotes_md}\n\n"
+        "### Known Current Facts (rolling memory)\n"
+        f"{facts_md}\n"
+        "<!-- AUTO_LIVE_BLOCK_END -->"
+    )
+
+def update_skill_md(persona_folder: Path, block_content: str):
+    skill_file = persona_folder / SKILL_NAME
+    if not skill_file.exists():
+        return False
+    text = skill_file.read_text(encoding="utf-8")
+    if "<!-- AUTO_LIVE_BLOCK_START -->" in text:
+        text = re.sub(
+            r"<!-- AUTO_LIVE_BLOCK_START -->.*?<!-- AUTO_LIVE_BLOCK_END -->",
+            block_content,
+            text,
+            flags=re.DOTALL,
+        )
+    else:
+        marker = "## Identity"
+        if marker in text:
+            text = text.replace(marker, block_content + "\n\n" + marker, 1)
+        else:
+            text = text + "\n\n" + block_content + "\n"
+    skill_file.write_text(text, encoding="utf-8")
+    return True
 
 # ── Claude web_search extraction ──────────────────────────────────────────────
 
@@ -334,6 +421,25 @@ def run():
             combined = prune_lines(existing_lines + new_index_lines)
             save_index(persona_folder, combined)
             print(f"  → known-facts-index.md updated ({len(combined)} facts tracked)")
+        else:
+            combined = existing_lines  # unchanged, still used below for SKILL.md render
+
+        # Quotes: update regardless of has_updates (a run can find quotes with no "new facts")
+        existing_quotes = load_quote_lines(persona_folder)
+        new_quote_lines = [
+            format_quote_storage(q.get("date", run_date), q.get("quote", ""), q.get("source", "?"), q.get("context", ""))
+            for q in result.get("top_quotes", [])
+            if q.get("quote", "").strip()
+        ]
+        combined_quotes = cap_lines_by_date(prune_lines(existing_quotes + new_quote_lines), QUOTES_MAX_COUNT)
+        if new_quote_lines:
+            save_quote_lines(persona_folder, combined_quotes)
+            print(f"  → recent-quotes.md updated ({len(combined_quotes)} quotes tracked)")
+
+        # Always refresh the Live Knowledge block in SKILL.md so a single fetch stays current
+        live_block = render_live_block(combined, combined_quotes, run_date)
+        if update_skill_md(persona_folder, live_block):
+            print(f"  → SKILL.md Live Knowledge block refreshed")
 
         write_update_log(persona_key, run_date, run_time, result, cfg["search_topics"], full_name, len(existing_lines))
         print(f"  → log written to logs/{persona_key}/update-log.md")

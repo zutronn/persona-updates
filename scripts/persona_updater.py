@@ -134,6 +134,12 @@ output EXACTLY this format:
 - **Source:** [Publication or platform name only]
 - **Implication:** [1 sentence: how this updates persona reasoning on this topic]
 
+Also pull 1-3 of the most notable things {full_name} ACTUALLY SAID this week —
+direct short quotes (under 15 words each, exact words, in quotation marks),
+not paraphrases. Pick the ones that best reveal his current thinking or stance.
+If he said nothing notable this week, just leave the top_quotes list empty in the
+JSON below — do NOT write any sentence about this in your main response text.
+
 After all update blocks, output this JSON (required):
 ```json
 {{
@@ -144,6 +150,9 @@ After all update blocks, output this JSON (required):
   "index_lines": [
     "- 2026-06-21 | Short topic: one-line fact summary under 15 words",
     "- 2026-06-21 | Another short fact"
+  ],
+  "top_quotes": [
+    {{"quote": "exact short quote under 15 words", "context": "5-8 words on what he was talking about", "source": "Publication", "date": "2026-06-18"}}
   ]
 }}
 ```
@@ -158,7 +167,8 @@ NO_UPDATES
   "topics_found": [],
   "sources_read": [],
   "update_count": 0,
-  "index_lines": []
+  "index_lines": [],
+  "top_quotes": []
 }}
 ```
 """
@@ -173,7 +183,7 @@ NO_UPDATES
     text_parts = [b.text for b in response.content if hasattr(b, "text") and b.text]
     text = "\n".join(text_parts).strip()
 
-    meta = {"has_updates": False, "topics_found": [], "sources_read": [], "update_count": 0, "index_lines": []}
+    meta = {"has_updates": False, "topics_found": [], "sources_read": [], "update_count": 0, "index_lines": [], "top_quotes": []}
     match = re.search(r"```json\s*(\{.*?\})\s*```", text, re.DOTALL)
     if match:
         try:
@@ -213,8 +223,20 @@ def write_update_log(persona_key, run_date, run_time, result, topics_searched, f
     topics_md = "\n".join(f"- {t}" for t in topics_searched)
     updates_md = result["updates"] if result["has_updates"] else "_Everything found already matched the known-facts index — no duplicate written._"
 
+    quotes = result.get("top_quotes", [])
+    if quotes:
+        quotes_md = "\n".join(
+            f'> "{q.get("quote","")}" — {q.get("source","?")}, {q.get("date","?")} _({q.get("context","")})_'
+            for q in quotes
+        )
+    else:
+        quotes_md = "_Nothing quote-worthy found this week._"
+
     entry = f"""
 ## {run_date} — {status}
+
+### 💬 What He Actually Said This Week
+{quotes_md}
 
 | Field | Value |
 |---|---|

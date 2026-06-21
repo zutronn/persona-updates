@@ -24,5 +24,9 @@
 - 2026-06-18 | LeCun criticism: Called xAI 'failure,' rent-a-datacenter unable to compete with OpenAI/Anthropic
 - 2026-06-16 | DOJ intervention: Asked court dismiss NAACP lawsuit citing national security, Grok military use
 - 2026-06-18 | SPCX stock: $213.50, $2.81T market cap, 58% above IPO, 4th most valuable US company
-- 2026-06-?? | Google compute: $920M/month deal for 32 months alongside Anthropic neocloud pivot
 - 2026-06-16 | Turbine expansion: 59 unpermitted turbines now operating at Southaven, up from 27
+- 2026-06-18 | SpaceX bond sale: $20B offering planned to refinance xAI acquisition bridge loan
+- 2026-06-20 | Bitcoin-AI thesis: Musk connects AI abundance to currency debasement, crypto as hedge
+- 2026-06-21 | Net worth: $1.23T (Bloomberg), $1.2T (Forbes), briefly hit $1.4T post-IPO
+- 2026-06-20 | AI deflation thesis: predicted AI will cause deflation not inflation via abundance
+- 2026-06 | Southaven lawsuit: residents filed class action over turbine noise and vibration
